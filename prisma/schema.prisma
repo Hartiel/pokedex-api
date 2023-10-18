@@ -9,3 +9,31 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model Type {
+  id              String                  @id @default(auto()) @map("_id") @db.ObjectId
+  type            String                  @unique
+  effectiveness   Json            
+  description     String
+
+  pokemons        Pokemon[]               @relation(fields: [pokemonIds], references: [id])
+  pokemonIds      String[]                @db.ObjectId
+}
+
+model Pokemon {
+  id              String                  @id @default(auto()) @map("_id") @db.ObjectId
+  pokedex_id      Int                     @unique
+  name            String                  @unique
+  description     String?
+  species         String?
+  height          Float
+  weight          Float
+  baseStats       Json
+
+  type            Type[]                  @relation(fields: [typeIds], references: [id])
+  typeIds         String[]                @db.ObjectId
+  evolutions      Pokemon[]               @relation("EvolutionPokemon", fields: [evolutionIds], references: [id])
+  evolutionIds    String[]                @db.ObjectId           
+  devolutions     Pokemon[]               @relation("EvolutionPokemon", fields: [devolutionIds], references: [id])
+  devolutionIds   String[]                @db.ObjectId
+}
