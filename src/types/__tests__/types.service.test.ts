@@ -1,7 +1,7 @@
 import { prismaMock } from './../../singleton';
 import typeService from './../types.service';
 
-let queryCreate = {
+let query = {
     "id": "65313a17f4167b3d2c0eb0ad",
     "type": "testType",
     "effectiveness": {
@@ -30,8 +30,33 @@ let queryCreate = {
 
 describe('types', () => {
     // TESTE CREATE
-    it('should resolve with "Tipo criado" string', async () => {
-        prismaMock.type.create.mockResolvedValue(queryCreate);
-        await expect(typeService.create(queryCreate)).resolves.toEqual(queryCreate);
+    it('should resolve with Type object', async () => {
+        prismaMock.type.create.mockResolvedValue(query);
+        await expect(typeService.create(query)).resolves.toEqual(query);
+    });
+
+    // TESTE GET ALL
+    it('should resolve with Type[] object', async () => {
+        prismaMock.type.findMany.mockResolvedValue([query]);
+        await expect(typeService.getAll()).resolves.toEqual([query]);
+    });
+
+    // TESTE GET BY TYPE
+    it('should resolve with Type object', async () => {
+        prismaMock.type.findFirstOrThrow.mockResolvedValue(query);
+        await expect(typeService.getByType('testType')).resolves.toEqual(query);
+    });
+
+    // TESTE UPDATE
+    it('should resolve with Type object', async () => {
+        query.type = 'changeTestType';
+        prismaMock.type.upsert.mockResolvedValue(query);
+        await expect(typeService.update('65313a17f4167b3d2c0eb0ad', { type: 'changeTestType' })).resolves.toEqual(query);
+    });
+
+    // TESTE DELETE
+    it('should resolve with "deleted" String', async () => {
+        prismaMock.type.delete.mockResolvedValue(query);
+        await expect(typeService.delete('65313a17f4167b3d2c0eb0ad')).resolves.toEqual(query);
     });
 });
